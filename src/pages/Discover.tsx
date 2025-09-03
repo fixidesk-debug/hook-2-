@@ -37,6 +37,7 @@ export default function Discover() {
     profileType: 'all'
   });
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {
