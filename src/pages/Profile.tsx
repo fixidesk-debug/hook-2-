@@ -106,15 +106,39 @@ export default function Profile() {
       .from('profile-photos')
       .getPublicUrl(fileName);
 
-    const newPhotos = [...(formData.photos || []), publicUrl];
-    setFormData(prev => ({ ...prev, photos: newPhotos }));
+    const newPhotos = [...(profile.photos || []), publicUrl];
+    
+    const { error: updateError } = await supabase
+      .from('profiles')
+      .update({ photos: newPhotos })
+      .eq('user_id', user.id);
+
+    if (updateError) {
+      toast.error('Error saving photo');
+    } else {
+      setProfile(prev => prev ? { ...prev, photos: newPhotos } : null);
+      setFormData(prev => ({ ...prev, photos: newPhotos }));
+      toast.success('Photo uploaded!');
+    }
+    
     setUploadingPhoto(false);
-    toast.success("Photo uploaded!");
   };
 
-  const removePhoto = (index: number) => {
-    const newPhotos = formData.photos?.filter((_, i) => i !== index) || [];
-    setFormData(prev => ({ ...prev, photos: newPhotos }));
+  const removePhoto = async (index: number) => {
+    const newPhotos = (profile.photos || []).filter((_, i) => i !== index);
+    
+    const { error } = await supabase
+      .from('profiles')
+      .update({ photos: newPhotos })
+      .eq('user_id', user.id);
+
+    if (error) {
+      toast.error('Error removing photo');
+    } else {
+      setProfile(prev => prev ? { ...prev, photos: newPhotos } : null);
+      setFormData(prev => ({ ...prev, photos: newPhotos }));
+      toast.success('Photo removed!');
+    }
   };
 
   const getTypeIcon = (type: string) => {
@@ -225,30 +249,33 @@ export default function Profile() {
               </div>
               
               {/* Photo Gallery */}
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {(formData.photos || []).map((photo, index) => (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-4">
+                {(profile.photos || []).map((photo, index) => (
                   <div key={index} className="relative">
                     <img 
                       src={photo} 
                       alt={`Profile ${index + 1}`}
-                      className="w-full h-32 object-cover border-4 border-black"
+                      className="w-full h-24 md:h-32 object-cover border-2 md:border-4 border-black cursor-pointer hover:opacity-80"
+                      onClick={() => window.open(photo, '_blank')}
                     />
                     {isEditing && (
                       <button
                         onClick={() => removePhoto(index)}
-                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 border-2 border-black"
+                        className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-1 border-2 border-black"
                       >
-                        <X className="h-4 w-4" />
+                        <X className="h-3 w-3 md:h-4 md:w-4" />
                       </button>
                     )}
                   </div>
                 ))}
                 
-                {isEditing && (
-                  <div className="border-4 border-dashed border-white h-32 flex items-center justify-center">
+                {isEditing && (profile.photos || []).length < 6 && (
+                  <div className="border-2 md:border-4 border-dashed border-white h-24 md:h-32 flex items-center justify-center">
                     <label className="cursor-pointer text-white font-black text-center">
-                      <Upload className="h-8 w-8 mx-auto mb-2" />
-                      {uploadingPhoto ? 'UPLOADING...' : 'ADD PHOTO'}
+                      <Upload className="h-6 w-6 md:h-8 md:w-8 mx-auto mb-1 md:mb-2" />
+                      <div className="text-xs md:text-sm">
+                        {uploadingPhoto ? 'UPLOADING...' : 'ADD PHOTO'}
+                      </div>
                       <input
                         type="file"
                         accept="image/*"
@@ -260,10 +287,10 @@ export default function Profile() {
                   </div>
                 )}
                 
-                {(formData.photos || []).length === 0 && (
+                {(!profile.photos || profile.photos.length === 0) && !isEditing && (
                   <div className="col-span-2 md:col-span-3 text-center">
-                    <div className="w-32 h-32 bg-white border-4 border-black mx-auto flex items-center justify-center">
-                      <span className="text-6xl font-black text-brutal-blue">
+                    <div className="w-24 h-24 md:w-32 md:h-32 bg-white border-2 md:border-4 border-black mx-auto flex items-center justify-center">
+                      <span className="text-4xl md:text-6xl font-black text-brutal-blue">
                         {profile.username.charAt(0).toUpperCase()}
                       </span>
                     </div>
