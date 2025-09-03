@@ -21,13 +21,13 @@ export const OnboardingFlow: React.FC = () => {
     try {
       const { error } = await supabase
         .from('profiles')
-        .upsert({
-          id: user.id,
+        .update({
           name,
           age: parseInt(age),
           interests,
           onboarded: true,
-        });
+        })
+        .eq('user_id', user.id);
 
       if (error) throw error;
       navigate('/discover');
