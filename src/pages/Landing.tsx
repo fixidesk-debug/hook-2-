@@ -44,13 +44,13 @@ export const Landing = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button 
-                variant="primary" 
+              <Button
+                variant="primary"
                 size="xl"
                 onClick={handleGetStarted}
                 className="flex-1 sm:flex-none"
               >
-                START EXPLORING
+                {user ? 'DISCOVER USERS' : 'START EXPLORING'}
               </Button>
               
               <Button 
