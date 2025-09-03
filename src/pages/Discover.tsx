@@ -333,6 +333,13 @@ export default function Discover() {
               <span className="hidden sm:inline">PASS</span>
             </Button>
             <Button
+              onClick={viewProfile}
+              className="flex-1 bg-brutal-blue text-white border-4 border-black font-black text-lg md:text-xl py-3 md:py-4 hover:bg-blue-600"
+            >
+              <Eye className="h-6 w-6 md:h-8 md:w-8 mr-1 md:mr-2" />
+              <span className="hidden sm:inline">VIEW</span>
+            </Button>
+            <Button
               onClick={handleLike}
               className="flex-1 bg-brutal-green text-black border-4 border-black font-black text-lg md:text-xl py-3 md:py-4 hover:bg-green-400"
             >
