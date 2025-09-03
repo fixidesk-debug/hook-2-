@@ -19,7 +19,8 @@ export const OnboardingFlow: React.FC = () => {
     
     setIsLoading(true);
     try {
-      const { error } = await supabase
+      console.log('Updating profile for user:', user.id);
+      const { data, error } = await supabase
         .from('profiles')
         .update({
           name,
@@ -27,12 +28,28 @@ export const OnboardingFlow: React.FC = () => {
           interests,
           onboarded: true,
         })
-        .eq('user_id', user.id);
+        .eq('user_id', user.id)
+        .select();
 
-      if (error) throw error;
+      console.log('Update result:', { data, error });
+      
+      if (error) {
+        console.error('Database error:', error);
+        alert(`Error: ${error.message}`);
+        return;
+      }
+      
+      if (!data || data.length === 0) {
+        console.error('No profile found to update');
+        alert('Profile not found. Please try logging out and back in.');
+        return;
+      }
+      
+      console.log('Profile updated successfully, navigating to discover');
       navigate('/discover');
     } catch (error) {
       console.error('Onboarding error:', error);
+      alert(`Unexpected error: ${error}`);
     } finally {
       setIsLoading(false);
     }
@@ -143,6 +160,14 @@ export const OnboardingFlow: React.FC = () => {
                 >
                   {isLoading ? 'SAVING...' : 'COMPLETE'}
                 </Button>
+                
+                {/* Debug info */}
+                <div className="mt-4 text-xs text-white">
+                  <p>User ID: {user?.id}</p>
+                  <p>Name: {name}</p>
+                  <p>Age: {age}</p>
+                  <p>Interests: {interests}</p>
+                </div>
               </div>
             </div>
           )}
