@@ -19,33 +19,55 @@ export const OnboardingFlow: React.FC = () => {
     
     setIsLoading(true);
     try {
-      console.log('Updating profile for user:', user.id);
-      const { data, error } = await supabase
+      // First check if profile exists
+      const { data: existingProfile } = await supabase
         .from('profiles')
-        .update({
-          name,
-          age: parseInt(age),
-          interests,
-          onboarded: true,
-        })
+        .select('*')
         .eq('user_id', user.id)
-        .select();
+        .single();
 
-      console.log('Update result:', { data, error });
-      
-      if (error) {
-        console.error('Database error:', error);
-        alert(`Error: ${error.message}`);
-        return;
+      console.log('Existing profile:', existingProfile);
+
+      if (!existingProfile) {
+        // Create profile if it doesn't exist
+        const { data, error } = await supabase
+          .from('profiles')
+          .insert({
+            user_id: user.id,
+            username: user.email?.split('@')[0] || 'user',
+            name,
+            age: parseInt(age),
+            interests,
+            onboarded: true,
+          })
+          .select();
+
+        if (error) {
+          console.error('Insert error:', error);
+          alert(`Insert Error: ${error.message}`);
+          return;
+        }
+      } else {
+        // Update existing profile
+        const { data, error } = await supabase
+          .from('profiles')
+          .update({
+            name,
+            age: parseInt(age),
+            interests,
+            onboarded: true,
+          })
+          .eq('user_id', user.id)
+          .select();
+
+        if (error) {
+          console.error('Update error:', error);
+          alert(`Update Error: ${error.message}`);
+          return;
+        }
       }
       
-      if (!data || data.length === 0) {
-        console.error('No profile found to update');
-        alert('Profile not found. Please try logging out and back in.');
-        return;
-      }
-      
-      console.log('Profile updated successfully, navigating to discover');
+      console.log('Profile operation successful, navigating...');
       navigate('/discover');
     } catch (error) {
       console.error('Onboarding error:', error);
