@@ -12,6 +12,7 @@ interface Match {
   user1_id: string;
   user2_id: string;
   created_at: string;
+  other_user_id: string;
   profile: {
     username?: string;
     type?: 'solo' | 'couple' | 'group';
