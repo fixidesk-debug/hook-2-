@@ -364,6 +364,9 @@ export default function Discover() {
           <div className="flex justify-between items-center mt-4">
             <div className="text-sm font-bold">
               {currentIndex + 1} / {profiles.length}
+              <div className="text-xs text-gray-500 mt-1">
+                {profiles.length > currentIndex + 1 ? `${profiles.length - currentIndex - 1} more to discover` : 'Last profile!'}
+              </div>
             </div>
             <Button
               onClick={fetchProfiles}
