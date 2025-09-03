@@ -1,0 +1,193 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* HOOK Neo-Brutalist Design System */
+
+@layer base {
+  :root {
+    /* Neo-Brutalist Color Palette - Pure HSL values */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
+    
+    /* Brand Colors - Bold and unapologetic */
+    --neon-pink: 342 100% 59%;        /* #FF2E63 */
+    --toxic-green: 110 100% 54%;      /* #39FF14 */  
+    --electric-blue: 217 100% 59%;    /* #2979FF */
+    --pure-black: 0 0% 0%;
+    --pure-white: 0 0% 100%;
+    
+    /* Semantic Tokens */
+    --primary: var(--neon-pink);
+    --primary-foreground: var(--pure-white);
+    
+    --secondary: var(--toxic-green);
+    --secondary-foreground: var(--pure-black);
+    
+    --accent: var(--electric-blue);
+    --accent-foreground: var(--pure-white);
+    
+    --destructive: var(--neon-pink);
+    --destructive-foreground: var(--pure-white);
+    
+    --success: var(--toxic-green);
+    --success-foreground: var(--pure-black);
+    
+    /* Surface Colors */
+    --card: var(--pure-white);
+    --card-foreground: var(--pure-black);
+    
+    --border: var(--pure-black);
+    --input: var(--pure-white);
+    --input-foreground: var(--pure-black);
+    
+    /* Interactive States */
+    --hover-invert: var(--pure-black);
+    --focus-ring: var(--neon-pink);
+    
+    /* Brutalist Design Tokens */
+    --border-harsh: 3px;
+    --border-brutal: 4px;
+    --spacing-brutal: 2rem;
+    --radius-none: 0px;
+    
+    /* Typography Scale */
+    --text-brutal-xl: 4rem;
+    --text-brutal-lg: 3rem;
+    --text-brutal-md: 2rem;
+    --text-brutal-sm: 1.5rem;
+  }
+  
+  /* Dark mode brutalist theme */
+  .dark {
+    --background: var(--pure-black);
+    --foreground: var(--pure-white);
+    
+    --card: var(--pure-black);
+    --card-foreground: var(--pure-white);
+    
+    --input: var(--pure-black);
+    --input-foreground: var(--pure-white);
+    
+    --hover-invert: var(--pure-white);
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+  
+  body {
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 400;
+    line-height: 1.4;
+    -webkit-font-smoothing: none; /* Disable font smoothing for raw look */
+    -moz-osx-font-smoothing: unset;
+  }
+  
+  /* Brutalist Typography */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+  
+  /* Remove all rounded corners globally */
+  * {
+    border-radius: var(--radius-none) !important;
+  }
+}
+
+@layer components {
+  /* Brutalist Button Styles */
+  .btn-brutal {
+    @apply px-8 py-4 font-mono font-bold text-lg uppercase tracking-wider;
+    @apply border-4 border-black transition-none;
+    @apply hover:bg-black hover:text-white;
+    @apply focus:outline-none focus:ring-4 focus:ring-pink-500;
+  }
+  
+  .btn-brutal-primary {
+    @apply btn-brutal bg-pink-500 text-white border-black;
+    @apply hover:bg-black hover:text-pink-500;
+  }
+  
+  .btn-brutal-secondary {
+    @apply btn-brutal bg-green-400 text-black border-black;
+    @apply hover:bg-black hover:text-green-400;
+  }
+  
+  .btn-brutal-accent {
+    @apply btn-brutal bg-blue-500 text-white border-black;
+    @apply hover:bg-black hover:text-blue-500;
+  }
+  
+  /* Brutalist Input Styles */
+  .input-brutal {
+    @apply px-4 py-4 bg-white text-black font-mono font-medium;
+    @apply border-4 border-black transition-none;
+    @apply focus:outline-none focus:ring-4 focus:ring-pink-500;
+    @apply placeholder:text-gray-600;
+  }
+  
+  /* Brutalist Card Styles */
+  .card-brutal {
+    @apply bg-white border-4 border-black p-6;
+    @apply transition-none hover:bg-black hover:text-white;
+  }
+  
+  /* Grid System - Asymmetric Brutalist */
+  .grid-brutal {
+    display: grid;
+    gap: var(--spacing-brutal);
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+  
+  /* Typography Utilities */
+  .text-brutal-display {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: var(--text-brutal-xl);
+    font-weight: 700;
+    line-height: 0.9;
+    text-transform: uppercase;
+    letter-spacing: -0.05em;
+  }
+  
+  .text-brutal-headline {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: var(--text-brutal-lg);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: -0.03em;
+  }
+  
+  .text-brutal-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: var(--text-brutal-md);
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  
+  .text-brutal-mono {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
