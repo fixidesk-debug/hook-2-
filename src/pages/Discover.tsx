@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Heart, X, Users, User, UsersIcon, RotateCcw, Flag, Shield, Settings } from "lucide-react";
+import { Heart, X, Users, User, UsersIcon, RotateCcw, Flag, Shield, Settings, Eye } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { ReportModal } from "@/components/moderation/ReportModal";
 import { AdvancedFilters, FilterOptions } from "@/components/matching/AdvancedFilters";
 import { requestNotificationPermission, setupNotificationListeners } from "@/lib/notifications";
+import { useNavigate } from "react-router-dom";
 
 interface Profile {
   id: string;
