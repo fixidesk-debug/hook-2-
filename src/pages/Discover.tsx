@@ -153,7 +153,7 @@ export default function Discover() {
 
   const handleBlock = async () => {
     if (!user || !currentProfile) return;
-    
+
     const { error } = await supabase
       .from('reports')
       .insert({
@@ -166,6 +166,12 @@ export default function Discover() {
       toast.success('User blocked');
       setBlockedUsers(prev => [...prev, currentProfile.user_id]);
       setCurrentIndex(prev => prev + 1);
+    }
+  };
+
+  const viewProfile = () => {
+    if (currentProfile) {
+      navigate(`/user/${currentProfile.user_id}`);
     }
   };
 
