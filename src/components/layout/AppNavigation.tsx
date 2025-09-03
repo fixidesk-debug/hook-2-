@@ -15,6 +15,7 @@ export const AppNavigation = () => {
   const navItems = [
     { path: '/discover', icon: Search, label: 'DISCOVER' },
     { path: '/matches', icon: Heart, label: 'MATCHES' },
+    { path: '/matches', icon: MessageCircle, label: 'CHAT' },
     { path: '/events', icon: Calendar, label: 'EVENTS' },
     { path: '/profile', icon: User, label: 'PROFILE' },
   ];
@@ -45,13 +46,7 @@ export const AppNavigation = () => {
             </Link>
           );
         })}
-        <button 
-          onClick={handleLogout}
-          className="flex-1 p-3 text-center bg-red-500 hover:bg-red-600 text-white"
-        >
-          <LogOut className="h-6 w-6 mx-auto mb-1" />
-          <div className="text-xs font-black">LOGOUT</div>
-        </button>
+
       </div>
     </nav>
   );
