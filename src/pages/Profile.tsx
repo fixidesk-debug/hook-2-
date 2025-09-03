@@ -4,9 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Edit3, Save, LogOut, Users, User, UsersIcon } from "lucide-react";
+import { Edit3, Save, LogOut, Users, User, UsersIcon, Upload, X } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface UserProfile {
   id: string;
@@ -27,25 +28,20 @@ export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [user, setUser] = useState(null);
   const [formData, setFormData] = useState<Partial<UserProfile>>({});
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const navigate = useNavigate();
+  const { user, signOut } = useAuth();
 
   useEffect(() => {
-    const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
-      if (user) {
-        fetchProfile();
-      }
-    };
-    getUser();
-  }, []);
+    if (user) {
+      fetchProfile();
+    }
+  }, [user]);
 
   const fetchProfile = async () => {
-    setIsLoading(true);
-    const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
+    setIsLoading(true);
 
     const { data, error } = await supabase
       .from('profiles')
@@ -84,12 +80,41 @@ export default function Profile() {
   };
 
   const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      toast.error("Error logging out");
-    } else {
-      navigate('/');
+    await signOut();
+    navigate('/');
+  };
+
+  const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !user) return;
+
+    setUploadingPhoto(true);
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('profile-photos')
+      .upload(fileName, file);
+
+    if (uploadError) {
+      toast.error("Error uploading photo");
+      setUploadingPhoto(false);
+      return;
     }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('profile-photos')
+      .getPublicUrl(fileName);
+
+    const newPhotos = [...(formData.photos || []), publicUrl];
+    setFormData(prev => ({ ...prev, photos: newPhotos }));
+    setUploadingPhoto(false);
+    toast.success("Photo uploaded!");
+  };
+
+  const removePhoto = (index: number) => {
+    const newPhotos = formData.photos?.filter((_, i) => i !== index) || [];
+    setFormData(prev => ({ ...prev, photos: newPhotos }));
   };
 
   const getTypeIcon = (type: string) => {
@@ -190,16 +215,60 @@ export default function Profile() {
       <div className="p-4">
         <div className="max-w-2xl mx-auto">
           <div className="bg-white border-4 border-black shadow-brutal">
-            {/* Profile Avatar */}
-            <div className="bg-brutal-blue border-b-4 border-black p-8 text-center">
-              <div className="w-32 h-32 bg-white border-4 border-black mx-auto flex items-center justify-center mb-4">
-                <span className="text-6xl font-black text-brutal-blue">
-                  {profile.username.charAt(0).toUpperCase()}
-                </span>
+            {/* Profile Photos */}
+            <div className="bg-brutal-blue border-b-4 border-black p-8">
+              <div className="text-center mb-4">
+                <div className="flex items-center justify-center gap-2 text-white mb-4">
+                  {getTypeIcon(profile.type)}
+                  <h2 className="text-3xl font-black">{profile.username.toUpperCase()}</h2>
+                </div>
               </div>
-              <div className="flex items-center justify-center gap-2 text-white">
-                {getTypeIcon(profile.type)}
-                <h2 className="text-3xl font-black">{profile.username.toUpperCase()}</h2>
+              
+              {/* Photo Gallery */}
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {(formData.photos || []).map((photo, index) => (
+                  <div key={index} className="relative">
+                    <img 
+                      src={photo} 
+                      alt={`Profile ${index + 1}`}
+                      className="w-full h-32 object-cover border-4 border-black"
+                    />
+                    {isEditing && (
+                      <button
+                        onClick={() => removePhoto(index)}
+                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 border-2 border-black"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
+                ))}
+                
+                {isEditing && (
+                  <div className="border-4 border-dashed border-white h-32 flex items-center justify-center">
+                    <label className="cursor-pointer text-white font-black text-center">
+                      <Upload className="h-8 w-8 mx-auto mb-2" />
+                      {uploadingPhoto ? 'UPLOADING...' : 'ADD PHOTO'}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handlePhotoUpload}
+                        disabled={uploadingPhoto}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
+                )}
+                
+                {(formData.photos || []).length === 0 && (
+                  <div className="col-span-2 md:col-span-3 text-center">
+                    <div className="w-32 h-32 bg-white border-4 border-black mx-auto flex items-center justify-center">
+                      <span className="text-6xl font-black text-brutal-blue">
+                        {profile.username.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -297,13 +366,13 @@ export default function Profile() {
               </div>
 
               <div>
-                <Label className="text-sm font-black mb-2 block">TAGS (comma separated)</Label>
+                <Label className="text-sm font-black mb-2 block">INTERESTS (comma separated)</Label>
                 {isEditing ? (
                   <Input
                     value={formData.tags?.join(', ') || ''}
                     onChange={(e) => handleTagsChange(e.target.value)}
                     className="border-4 border-black font-bold"
-                    placeholder="kink1, kink2, interest1..."
+                    placeholder="music, sports, art, travel..."
                   />
                 ) : (
                   <div className="flex flex-wrap gap-2">
@@ -314,7 +383,7 @@ export default function Profile() {
                         </span>
                       ))
                     ) : (
-                      <span className="text-gray-500 font-bold">No tags yet</span>
+                      <span className="text-gray-500 font-bold">No interests yet</span>
                     )}
                   </div>
                 )}

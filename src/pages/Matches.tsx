@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { MessageCircle, Users, User, UsersIcon } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 interface Match {
   id: string;
@@ -23,24 +25,18 @@ interface Match {
 export default function Matches() {
   const [matches, setMatches] = useState<Match[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [user, setUser] = useState(null);
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
-    const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
-      if (user) {
-        fetchMatches();
-      }
-    };
-    getUser();
-  }, []);
+    if (user) {
+      fetchMatches();
+    }
+  }, [user]);
 
   const fetchMatches = async () => {
-    setIsLoading(true);
-    const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
+    setIsLoading(true);
 
     // Get matches and profile data for the other user
     const { data, error } = await supabase
@@ -116,9 +112,10 @@ export default function Matches() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <div className="text-center">
-          <h1 className="text-4xl font-black mb-4">LOADING MATCHES...</h1>
+          <LoadingSpinner size="lg" className="mx-auto mb-4" />
+          <h1 className="text-2xl md:text-4xl font-black">LOADING MATCHES...</h1>
         </div>
       </div>
     );
@@ -131,31 +128,31 @@ export default function Matches() {
         <h1 className="text-3xl font-black text-center">YOUR MATCHES</h1>
       </div>
 
-      <div className="p-4">
+      <div className="p-2 md:p-4">
         {matches.length === 0 ? (
-          <div className="text-center mt-12">
-            <div className="bg-white border-4 border-black p-8 shadow-brutal max-w-md mx-auto">
-              <h2 className="text-2xl font-black mb-4">NO MATCHES YET</h2>
-              <p className="font-bold mb-6">Start swiping to find your connections!</p>
+          <div className="text-center mt-8 md:mt-12">
+            <div className="bg-white border-4 border-black p-6 md:p-8 shadow-brutal max-w-md mx-auto">
+              <h2 className="text-xl md:text-2xl font-black mb-4">NO MATCHES YET</h2>
+              <p className="font-bold mb-6 text-sm md:text-base">Start swiping to find your connections!</p>
               <Button 
                 onClick={() => navigate('/discover')}
-                className="bg-brutal-pink text-black font-black border-4 border-black"
+                className="bg-brutal-pink text-black font-black border-4 border-black w-full md:w-auto"
               >
                 START DISCOVERING
               </Button>
             </div>
           </div>
         ) : (
-          <div className="grid gap-4 max-w-2xl mx-auto">
+          <div className="grid gap-3 md:gap-4 max-w-2xl mx-auto">
             {matches.map((match) => (
               <div key={match.id} className="bg-white border-4 border-black shadow-brutal">
-                <div className="p-4">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
+                <div className="p-3 md:p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-2 flex-wrap">
                         {getTypeIcon(match.profile.type)}
-                        <h3 className="text-xl font-black">{match.profile.username?.toUpperCase()}</h3>
-                        <span className="bg-black text-white px-2 py-1 font-black text-sm">
+                        <h3 className="text-lg md:text-xl font-black break-words">{match.profile.username?.toUpperCase()}</h3>
+                        <span className="bg-black text-white px-2 py-1 font-black text-xs md:text-sm">
                           {match.profile.age}
                         </span>
                       </div>
@@ -170,7 +167,7 @@ export default function Matches() {
                       </div>
 
                       {match.profile.bio && (
-                        <p className="text-sm font-bold mb-2 line-clamp-2">{match.profile.bio}</p>
+                        <p className="text-xs md:text-sm font-bold mb-2 line-clamp-2">{match.profile.bio}</p>
                       )}
 
                       <div className="text-xs font-bold text-gray-600">
@@ -178,21 +175,29 @@ export default function Matches() {
                       </div>
                     </div>
 
-                    <div className="ml-4 flex flex-col gap-2">
-                      <div className="w-16 h-16 bg-brutal-blue border-2 border-black flex items-center justify-center">
-                        <span className="text-2xl font-black text-white">
-                          {match.profile.username?.charAt(0).toUpperCase() || '?'}
-                        </span>
+                    <div className="flex-shrink-0">
+                      <div className="w-12 h-12 md:w-16 md:h-16 bg-brutal-blue border-2 border-black flex items-center justify-center overflow-hidden">
+                        {match.profile.photos && match.profile.photos.length > 0 ? (
+                          <img 
+                            src={match.profile.photos[0]} 
+                            alt={match.profile.username}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <span className="text-lg md:text-2xl font-black text-white">
+                            {match.profile.username?.charAt(0).toUpperCase() || '?'}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
 
-                  <div className="mt-4 pt-4 border-t-2 border-black">
+                  <div className="mt-3 md:mt-4 pt-3 md:pt-4 border-t-2 border-black">
                     <Button 
-                      className="w-full bg-brutal-pink text-black font-black border-2 border-black hover:bg-pink-400"
+                      className="w-full bg-brutal-pink text-black font-black border-2 border-black hover:bg-pink-400 text-sm md:text-base"
                       onClick={() => navigate(`/chat/${match.id}`)}
                     >
-                      <MessageCircle className="h-5 w-5 mr-2" />
+                      <MessageCircle className="h-4 w-4 md:h-5 md:w-5 mr-2" />
                       START CHAT
                     </Button>
                   </div>
