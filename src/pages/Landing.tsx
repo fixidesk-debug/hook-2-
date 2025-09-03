@@ -7,9 +7,16 @@ import hookHero from '@/assets/hook-hero.jpg';
 
 export const Landing = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const handleGetStarted = () => {
-    navigate('/auth');
+    if (user) {
+      // User is already logged in, go directly to discover
+      navigate('/discover');
+    } else {
+      // User needs to authenticate first
+      navigate('/auth');
+    }
   };
 
   return (
