@@ -212,10 +212,23 @@ export default function Discover() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center max-w-md mx-auto p-8">
           <h1 className="text-4xl font-black mb-4 text-foreground">NO MORE PROFILES</h1>
-          <p className="text-lg mb-6">You've seen everyone! Check back later for new profiles.</p>
-          <Button onClick={fetchProfiles} className="bg-brutal-pink text-black font-black">
-            REFRESH
-          </Button>
+          <p className="text-lg mb-6">
+            {profiles.length === 0
+              ? "No profiles available to discover yet. Try adjusting your filters or check back later!"
+              : "You've seen everyone! Check back later for new profiles."
+            }
+          </p>
+          <div className="flex flex-col gap-4">
+            <Button onClick={fetchProfiles} className="bg-brutal-pink text-black font-black">
+              REFRESH
+            </Button>
+            <Button
+              onClick={() => setShowFilters(true)}
+              className="bg-brutal-blue text-white font-black"
+            >
+              ADJUST FILTERS
+            </Button>
+          </div>
         </div>
       </div>
     );
