@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Heart, X, Users, User, UsersIcon, RotateCcw, Flag, Shield, Settings } from "lucide-react";
+import { Heart, X, Users, User, UsersIcon, RotateCcw, Flag, Shield, Settings, Eye } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { ReportModal } from "@/components/moderation/ReportModal";
 import { AdvancedFilters, FilterOptions } from "@/components/matching/AdvancedFilters";
 import { requestNotificationPermission, setupNotificationListeners } from "@/lib/notifications";
+import { useNavigate } from "react-router-dom";
 
 interface Profile {
   id: string;
@@ -36,6 +37,7 @@ export default function Discover() {
     profileType: 'all'
   });
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {
@@ -151,7 +153,7 @@ export default function Discover() {
 
   const handleBlock = async () => {
     if (!user || !currentProfile) return;
-    
+
     const { error } = await supabase
       .from('reports')
       .insert({
@@ -164,6 +166,12 @@ export default function Discover() {
       toast.success('User blocked');
       setBlockedUsers(prev => [...prev, currentProfile.user_id]);
       setCurrentIndex(prev => prev + 1);
+    }
+  };
+
+  const viewProfile = () => {
+    if (currentProfile) {
+      navigate(`/user/${currentProfile.user_id}`);
     }
   };
 
@@ -204,10 +212,23 @@ export default function Discover() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center max-w-md mx-auto p-8">
           <h1 className="text-4xl font-black mb-4 text-foreground">NO MORE PROFILES</h1>
-          <p className="text-lg mb-6">You've seen everyone! Check back later for new profiles.</p>
-          <Button onClick={fetchProfiles} className="bg-brutal-pink text-black font-black">
-            REFRESH
-          </Button>
+          <p className="text-lg mb-6">
+            {profiles.length === 0
+              ? "No profiles available to discover yet. Try adjusting your filters or check back later!"
+              : "You've seen everyone! Check back later for new profiles."
+            }
+          </p>
+          <div className="flex flex-col gap-4">
+            <Button onClick={fetchProfiles} className="bg-brutal-pink text-black font-black">
+              REFRESH
+            </Button>
+            <Button
+              onClick={() => setShowFilters(true)}
+              className="bg-brutal-blue text-white font-black"
+            >
+              ADJUST FILTERS
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -325,6 +346,13 @@ export default function Discover() {
               <span className="hidden sm:inline">PASS</span>
             </Button>
             <Button
+              onClick={viewProfile}
+              className="flex-1 bg-brutal-blue text-white border-4 border-black font-black text-lg md:text-xl py-3 md:py-4 hover:bg-blue-600"
+            >
+              <Eye className="h-6 w-6 md:h-8 md:w-8 mr-1 md:mr-2" />
+              <span className="hidden sm:inline">VIEW</span>
+            </Button>
+            <Button
               onClick={handleLike}
               className="flex-1 bg-brutal-green text-black border-4 border-black font-black text-lg md:text-xl py-3 md:py-4 hover:bg-green-400"
             >
@@ -336,6 +364,9 @@ export default function Discover() {
           <div className="flex justify-between items-center mt-4">
             <div className="text-sm font-bold">
               {currentIndex + 1} / {profiles.length}
+              <div className="text-xs text-gray-500 mt-1">
+                {profiles.length > currentIndex + 1 ? `${profiles.length - currentIndex - 1} more to discover` : 'Last profile!'}
+              </div>
             </div>
             <Button
               onClick={fetchProfiles}

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { MessageCircle, Users, User, UsersIcon } from "lucide-react";
+import { MessageCircle, Users, User, UsersIcon, Eye } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -12,6 +12,7 @@ interface Match {
   user1_id: string;
   user2_id: string;
   created_at: string;
+  other_user_id: string;
   profile: {
     username?: string;
     type?: 'solo' | 'couple' | 'group';
@@ -70,6 +71,7 @@ export default function Matches() {
 
         return {
           ...match,
+          other_user_id: otherUserId,
           profile: profile || {}
         };
       })
@@ -193,13 +195,22 @@ export default function Matches() {
                   </div>
 
                   <div className="mt-3 md:mt-4 pt-3 md:pt-4 border-t-2 border-black">
-                    <Button 
-                      className="w-full bg-brutal-pink text-black font-black border-2 border-black hover:bg-pink-400 text-sm md:text-base"
-                      onClick={() => navigate(`/chat/${match.id}`)}
-                    >
-                      <MessageCircle className="h-4 w-4 md:h-5 md:w-5 mr-2" />
-                      START CHAT
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        className="flex-1 bg-brutal-blue text-white font-black border-2 border-black hover:bg-blue-600 text-sm md:text-base"
+                        onClick={() => navigate(`/user/${match.other_user_id}`)}
+                      >
+                        <Eye className="h-4 w-4 md:h-5 md:w-5 mr-2" />
+                        VIEW
+                      </Button>
+                      <Button
+                        className="flex-1 bg-brutal-pink text-black font-black border-2 border-black hover:bg-pink-400 text-sm md:text-base"
+                        onClick={() => navigate(`/chat/${match.id}`)}
+                      >
+                        <MessageCircle className="h-4 w-4 md:h-5 md:w-5 mr-2" />
+                        CHAT
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>

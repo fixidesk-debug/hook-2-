@@ -2,13 +2,21 @@ import React from 'react';
 import { Button } from '@/components/ui/button-brutal';
 import { HookHeader } from '@/components/layout/HookHeader';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 import hookHero from '@/assets/hook-hero.jpg';
 
 export const Landing = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const handleGetStarted = () => {
-    navigate('/auth');
+    if (user) {
+      // User is already logged in, go directly to discover
+      navigate('/discover');
+    } else {
+      // User needs to authenticate first
+      navigate('/auth');
+    }
   };
 
   return (
@@ -36,13 +44,13 @@ export const Landing = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button 
-                variant="primary" 
+              <Button
+                variant="primary"
                 size="xl"
                 onClick={handleGetStarted}
                 className="flex-1 sm:flex-none"
               >
-                START EXPLORING
+                {user ? 'DISCOVER USERS' : 'START EXPLORING'}
               </Button>
               
               <Button 
@@ -153,12 +161,12 @@ export const Landing = () => {
             </h3>
             
             <div className="flex justify-center">
-              <Button 
-                variant="accent" 
+              <Button
+                variant="accent"
                 size="xl"
                 onClick={handleGetStarted}
               >
-                JOIN THE REVOLUTION
+                {user ? 'START DISCOVERING' : 'JOIN THE REVOLUTION'}
               </Button>
             </div>
           </div>

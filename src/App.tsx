@@ -14,6 +14,7 @@ import Matches from "./pages/Matches";
 import Events from "./pages/Events";
 import Chat from "./pages/Chat";
 import Profile from "./pages/Profile";
+import UserProfile from "./pages/UserProfile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -61,6 +62,13 @@ const App = () => (
                 <ProtectedRoute>
                   <AuthGuard>
                     <Profile />
+                  </AuthGuard>
+                </ProtectedRoute>
+              } />
+              <Route path="/user/:userId" element={
+                <ProtectedRoute>
+                  <AuthGuard>
+                    <UserProfile />
                   </AuthGuard>
                 </ProtectedRoute>
               } />
