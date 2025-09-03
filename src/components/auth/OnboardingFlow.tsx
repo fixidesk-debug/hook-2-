@@ -68,7 +68,7 @@ export const OnboardingFlow: React.FC = () => {
       }
       
       console.log('Profile operation successful, navigating...');
-      navigate('/discover');
+      window.location.href = '/discover';
     } catch (error) {
       console.error('Onboarding error:', error);
       alert(`Unexpected error: ${error}`);
