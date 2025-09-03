@@ -120,7 +120,7 @@ export default function Discover() {
       console.error('Error liking profile:', error);
       toast.error("Error liking profile");
     } else {
-      // Check for match
+      // Check for match (the trigger will create it automatically)
       const { data: mutualLike } = await supabase
         .from('likes')
         .select('*')
@@ -129,7 +129,7 @@ export default function Discover() {
         .single();
 
       if (mutualLike) {
-        toast.success("🎉 IT'S A MATCH!");
+        toast.success("🎉 IT'S A MATCH! Check your matches to start chatting!");
       } else {
         toast.success("Liked!");
       }
