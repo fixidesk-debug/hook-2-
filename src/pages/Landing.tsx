@@ -2,6 +2,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button-brutal';
 import { HookHeader } from '@/components/layout/HookHeader';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 import hookHero from '@/assets/hook-hero.jpg';
 
 export const Landing = () => {
