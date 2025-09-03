@@ -71,6 +71,7 @@ export default function Matches() {
 
         return {
           ...match,
+          other_user_id: otherUserId,
           profile: profile || {}
         };
       })
