@@ -161,12 +161,12 @@ export const Landing = () => {
             </h3>
             
             <div className="flex justify-center">
-              <Button 
-                variant="accent" 
+              <Button
+                variant="accent"
                 size="xl"
                 onClick={handleGetStarted}
               >
-                JOIN THE REVOLUTION
+                {user ? 'START DISCOVERING' : 'JOIN THE REVOLUTION'}
               </Button>
             </div>
           </div>
