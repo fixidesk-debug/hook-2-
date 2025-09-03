@@ -258,14 +258,12 @@ export default function Profile() {
                       className="w-full h-24 md:h-32 object-cover border-2 md:border-4 border-black cursor-pointer hover:opacity-80"
                       onClick={() => window.open(photo, '_blank')}
                     />
-                    {isEditing && (
-                      <button
-                        onClick={() => removePhoto(index)}
-                        className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-1 border-2 border-black"
-                      >
-                        <X className="h-3 w-3 md:h-4 md:w-4" />
-                      </button>
-                    )}
+                    <button
+                      onClick={() => removePhoto(index)}
+                      className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-1 border-2 border-black"
+                    >
+                      <X className="h-3 w-3 md:h-4 md:w-4" />
+                    </button>
                   </div>
                 ))}
                 
@@ -287,7 +285,7 @@ export default function Profile() {
                   </div>
                 )}
                 
-                {(!profile.photos || profile.photos.length === 0) && !isEditing && (
+                {(!profile.photos || profile.photos.length === 0) && (
                   <div className="col-span-2 md:col-span-3 text-center">
                     <div className="w-24 h-24 md:w-32 md:h-32 bg-white border-2 md:border-4 border-black mx-auto flex items-center justify-center">
                       <span className="text-4xl md:text-6xl font-black text-brutal-blue">
