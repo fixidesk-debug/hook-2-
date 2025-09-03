@@ -65,6 +65,13 @@ const App = () => (
                   </AuthGuard>
                 </ProtectedRoute>
               } />
+              <Route path="/user/:userId" element={
+                <ProtectedRoute>
+                  <AuthGuard>
+                    <UserProfile />
+                  </AuthGuard>
+                </ProtectedRoute>
+              } />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </div>
