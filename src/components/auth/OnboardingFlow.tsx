@@ -169,7 +169,7 @@ export const OnboardingFlow: React.FC = () => {
                   onClick={() => setStep(2)}
                   variant="outline"
                   size="lg"
-                  className="flex-1 bg-pure-white text-pure-black hover:bg-pure-black hover:text-pure-white"
+                  className="flex-1 bg-pure-white text-pure-black hover:bg-pure-black hover:text-pure-white min-h-[48px]"
                 >
                   BACK
                 </Button>
@@ -178,18 +178,10 @@ export const OnboardingFlow: React.FC = () => {
                   disabled={!interests.trim() || isLoading}
                   variant="outline"
                   size="lg"
-                  className="flex-1 bg-pure-white text-pure-black hover:bg-pure-black hover:text-pure-white"
+                  className="flex-1 bg-pure-white text-pure-black hover:bg-pure-black hover:text-pure-white min-h-[48px]"
                 >
                   {isLoading ? 'SAVING...' : 'COMPLETE'}
                 </Button>
-                
-                {/* Debug info */}
-                <div className="mt-4 text-xs text-white">
-                  <p>User ID: {user?.id}</p>
-                  <p>Name: {name}</p>
-                  <p>Age: {age}</p>
-                  <p>Interests: {interests}</p>
-                </div>
               </div>
             </div>
           )}
