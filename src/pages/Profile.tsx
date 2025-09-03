@@ -269,7 +269,7 @@ export default function Profile() {
                   </div>
                 ))}
                 
-                {isEditing && (profile.photos || []).length < 6 && (
+                {(profile.photos || []).length < 6 && (
                   <div className="border-2 md:border-4 border-dashed border-white h-24 md:h-32 flex items-center justify-center">
                     <label className="cursor-pointer text-white font-black text-center">
                       <Upload className="h-6 w-6 md:h-8 md:w-8 mx-auto mb-1 md:mb-2" />
